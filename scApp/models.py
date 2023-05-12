@@ -10,7 +10,7 @@ class UserInfo(models.Model):
 
 
 class Department(models.Model):
-    title = models.CharField(max_length=16)
+    title = models.CharField(max_length=20)
 
 
 class Role(models.Model):
