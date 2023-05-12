@@ -1,5 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
 import requests
+from scApp import models
 
 
 # Create your views here.
@@ -87,3 +88,65 @@ def login(request):
         else:
             # return HttpResponse("用户名密码不正确!")
             return render(request, 'login.html', {'error_msg': '用户名或密码错误'})
+
+
+# 操作数据库中数据
+def orm(request):
+    # models.Department.objects.create(title="市场部")
+    # models.Department.objects.create(title="实施部")
+    # models.UserInfo.objects.create(name='ssyi', password='000018', age='18')
+
+    # 查询获取数据
+    data_list = models.UserInfo.objects.filter(id=1)
+    # data_list = models.UserInfo.objects.all()
+    print(data_list)
+    for obj in data_list:
+        print(obj.id, obj.name)
+
+    # 更新
+    # models.UserInfo.objects.all().update(password=999)
+    # models.UserInfo.objects.filter(id=1).update(password=999)
+    return HttpResponse('成功')
+
+
+def login_list(request):
+    data_list = models.UserInfo.objects.all()
+    return render(request, 'login_list.html', {'data_list': data_list})
+
+
+def login_add(request):
+    if request.method == 'GET':
+        return render(request, 'login_add.html')
+
+    user = request.POST.get("user")
+    pwd = request.POST.get("pwd")
+    age = request.POST.get("age")
+    notes = request.POST.get("notes")
+
+    # 验证用户输入
+    if not user or not pwd or not age:
+        return render(request, 'login_add.html', {'error': '必填项不可为空'})
+
+    try:
+        age = int(age)
+    except ValueError:
+        return render(request, 'login_add.html', {'error': '年龄必须为数字'})
+
+    try:
+        # 插入数据
+        models.UserInfo.objects.create(name=user, password=pwd, age=age, notes=notes)
+    except models.UserInfo.DoesNotExist:
+        return render(request, 'login_add.html', {'error': '用户名已存在'})
+    except Exception as e:
+        # 出现异常，返回错误信息
+        return render(request, 'login_add.html', {'error': '出现异常，请重试'})
+
+    # 重定向到列表页面
+    return redirect("/login/list/")
+
+
+def login_del(request):
+    nid = request.GET.get('nid')
+    models.UserInfo.objects.filter(id=nid).delete()
+    # return HttpResponse('删除成功')
+    return redirect("/login/list/")

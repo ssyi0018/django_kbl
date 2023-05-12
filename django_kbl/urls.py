@@ -29,4 +29,10 @@ urlpatterns = [
 
     # 用户登陆
     path('login/', views.login),
+    path('login/list/',views.login_list),
+    path('login/add/', views.login_add),
+    path('login/del/', views.login_del),
+
+    #数据库操作
+    path('orm/',views.orm),
 ]
