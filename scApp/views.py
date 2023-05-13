@@ -1,6 +1,8 @@
 from django.shortcuts import render, HttpResponse, redirect
 import requests
 from scApp import models
+from pptx import Presentation
+import base64
 
 
 # Create your views here.
@@ -150,3 +152,24 @@ def login_del(request):
     models.UserInfo.objects.filter(id=nid).delete()
     # return HttpResponse('删除成功')
     return redirect("/login/list/")
+
+
+def ppt_view(request):
+    prs = Presentation('scApp/path/ppt/file.pptx')
+
+    # 获取PPT的幻灯片数量
+    num_slides = len(prs.slides)
+
+    # 获取第一张幻灯片，包括的文本框数量和内容
+    slide = prs.slides[0]
+    num_text_boxes = len(slide.shapes.placeholders)
+    text_boxes_content = []
+    for shape in slide.shapes.placeholders:
+        if shape.has_text_frame:
+            text_boxes_content.append(shape.text_frame.text)
+
+    return render(request, 'ppt.html', {
+        'num_slides': num_slides,
+        'num_text_boxes': num_text_boxes,
+        'text_boxes_content': text_boxes_content,
+    })

@@ -24,15 +24,18 @@ urlpatterns = [
     path('user/list/', views.user_list),
     path('user/add/', views.user_add),
     path('tpl/', views.tpl),
-    path('news/',views.news),
+    path('news/', views.news),
     path('something/', views.something),
 
     # 用户登陆
     path('login/', views.login),
-    path('login/list/',views.login_list),
+    path('login/list/', views.login_list),
     path('login/add/', views.login_add),
     path('login/del/', views.login_del),
 
-    #数据库操作
-    path('orm/',views.orm),
+    # 数据库操作
+    path('orm/', views.orm),
+
+    # ppt展示
+    path('ppt/', views.ppt_view),
 ]

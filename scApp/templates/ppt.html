@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .slide {
+            background-color: white;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+<h1>PPT信息</h1>
+<p>幻灯片数量：{{ num_slides }}</p>
+<p>第一张幻灯片文本框数量：{{ num_text_boxes }}</p>
+<p>第一张幻灯片文本内容：</p>
+<ul>
+{% for content in text_boxes_content %}
+    <li>{{ content }}</li>
+{% endfor %}
+</ul>
+</body>
+</html>
