@@ -2,7 +2,6 @@ from django.shortcuts import render, HttpResponse, redirect
 import requests
 from scApp import models
 from pptx import Presentation
-import base64
 
 
 # Create your views here.
@@ -173,3 +172,9 @@ def ppt_view(request):
         'num_text_boxes': num_text_boxes,
         'text_boxes_content': text_boxes_content,
     })
+
+
+def depart_list(request):
+    queryset = models.Department.objects.all()
+
+    return render(request, 'depart_list.html',{'queryset':queryset})

@@ -38,4 +38,7 @@ urlpatterns = [
 
     # ppt展示
     path('ppt/', views.ppt_view),
+
+    # 部门列表
+    path('depart/list/', views.depart_list)
 ]
