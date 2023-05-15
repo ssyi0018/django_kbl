@@ -1,0 +1,7 @@
+-- 删除id的断层问题
+--设置id为0
+set @auto_id = 0;
+--UPDATE 表名 set id = (@auto_id := @auto_id +1);
+UPDATE line set id = (@auto_id := @auto_id +1);
+--ALTER TABLE 表名 AUTO_INCREMENT = 1;
+ALTER TABLE line AUTO_INCREMENT = 1;

@@ -40,5 +40,9 @@ urlpatterns = [
     path('ppt/', views.ppt_view),
 
     # 部门列表
-    path('depart/list/', views.depart_list)
+    path('depart/list/', views.depart_list),
+    path('depart/add/', views.depart_add),
+    path('depart/del/', views.depart_del),
+    path('depart/<int:nid>/edit/', views.depart_edit),
+
 ]
