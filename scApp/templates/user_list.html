@@ -1,16 +1,54 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="{% static 'plugins/bootstrap-3.4.1/css/bootstrap.css' %}">
-</head>
-<body>
-    <h1>用户列表</h1>
-    <input type="text" class="btn btn-primary" value="新建">
+{% extends 'layout.html' %}
 
-    <script src="{% static 'js/jquery-3.6.4.min.js' %}"></script>
-    <script src="{% static 'plugins/bootstrap-3.4.1/js/bootstrap.js' %}"></script>
-</body>
-</html>
+{% block content %}
+    <div class="container">
+        <div style="margin-bottom: 10px">
+            <a class="btn btn-success" href="/user/add">
+                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+                新建用户
+            </a>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                用户列表
+            </div>
+
+            <!-- Table -->
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>姓名</th>
+                    <th>年龄</th>
+                    <th>余额</th>
+                    <th>入职时间</th>
+                    <th>性别</th>
+                    <th>所属部门</th>
+                    <th>角色名称</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for foo in  queryset01 %}
+                    <tr>
+                        <th>{{ foo.id }}</th>
+                        <td>{{ foo.name }}</td>
+                        <td>{{ foo.age }}</td>
+                        <td>{{ foo.account }}</td>
+                        <td>{{ foo.create_time|date:'Y-m-d' }}</td>
+                        <td>{{ foo.get_gender_display }}</td>
+                        <td>{{ foo.depart.title }}</td>
+                        <td>{{ foo.role.caption }}</td>
+                        <td>
+                            <a class="btn btn-primary btn-xs" href="#">编辑</a>
+                            <a class="btn btn-danger btn-xs" href="#">删除</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

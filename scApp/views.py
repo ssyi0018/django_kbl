@@ -9,14 +9,6 @@ def index(request):
     return HttpResponse("欢迎ssyi")
 
 
-def user_list(request):
-    return render(request, 'user_list.html')
-
-
-def user_add(request):
-    return render(request, 'user_add.html')
-
-
 def tpl(request):
     name = 'ssyi'
     roles = ['管理员', 'CEO', '保安']
@@ -200,10 +192,45 @@ def depart_del(request):
 def depart_edit(request, nid):
     if request.method == 'GET':
         row_object = models.Department.objects.filter(id=nid).first()
-    # 重定向到列表页面
+        # 重定向到列表页面
         return render(request, 'depart_edit.html', {'row_object': row_object})
 
     # 获取post提交内容
     name = request.POST.get('title')
     models.Department.objects.filter(id=nid).update(title=name)
     return redirect("/depart/list/")
+
+
+def user_list(request):
+    queryset = models.UserInfo.objects.all()
+    # for obj in queryset:
+    #     # obj.get_gender_display() 自动找定义的元组数据
+    #     # obj.depart.title  # 获取关联表数据
+    #     print(obj.create_time.strftime('%Y-%m-%d'), obj.get_gender_display(),
+    #           obj.depart.title
+    #           )
+    return render(request, 'user_list.html', {'queryset01': queryset})
+
+
+def user_add(request):
+    if request.method == 'GET':
+        context = {
+            'gender_choices': models.UserInfo.gender_choices,
+            'depart_list': models.Department.objects.all(),
+            'role_list': models.Role.objects.all(),
+        }
+        return render(request, 'user_add.html', context)
+
+    # post获取页面value里数据
+    user = request.POST.get('user')
+    pwd = request.POST.get('pwd')
+    age = request.POST.get('age')
+    ac = request.POST.get('ac')
+    ctime = request.POST.get('ctime')
+    gd = request.POST.get('gd')
+    dp = request.POST.get('dp')
+    re = request.POST.get('re')
+
+    models.UserInfo.objects.create(name=user, password=pwd, age=age, account=ac, create_time=ctime,
+                                   gender=gd, depart_id=dp, role_id=re, )
+    return redirect("/user/list/")

@@ -21,8 +21,8 @@ from scApp import views
 urlpatterns = [
     # path('admin/', admin.site.urls),
     path('index/', views.index),
-    path('user/list/', views.user_list),
-    path('user/add/', views.user_add),
+    # path('user/list/', views.user_list),
+    # path('user/add/', views.user_add),
     path('tpl/', views.tpl),
     path('news/', views.news),
     path('something/', views.something),
@@ -44,5 +44,9 @@ urlpatterns = [
     path('depart/add/', views.depart_add),
     path('depart/del/', views.depart_del),
     path('depart/<int:nid>/edit/', views.depart_edit),
+
+    # 用户管理
+    path('user/list/', views.user_list),
+    path('user/add/', views.user_add),
 
 ]
