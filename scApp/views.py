@@ -2,6 +2,7 @@ from django.shortcuts import render, HttpResponse, redirect
 import requests
 from scApp import models
 from pptx import Presentation
+from django import forms
 
 
 # Create your views here.
@@ -234,3 +235,30 @@ def user_add(request):
     models.UserInfo.objects.create(name=user, password=pwd, age=age, account=ac, create_time=ctime,
                                    gender=gd, depart_id=dp, role_id=re, )
     return redirect("/user/list/")
+
+
+# 使用modelform生成页面input框
+class UserModelForm(forms.ModelForm):
+    class Meta:
+        model = models.UserInfo
+        fields = ['name', 'password', 'age', 'account', 'create_time', 'gender', 'depart', 'role']
+        # 插件里加样式
+        # widgets = {
+        #     'name': forms.TextInput(attrs={'class': "form-control"}),
+        #     'password': forms.PasswordInput(attrs={'class': "form-control"}),
+        # }
+
+    # 重写方法，循环找所有插件，进行重写class样式
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for name, field in self.fields.items():
+            # print(name, field)
+            if name == 'role':
+                continue
+            field.widget.attrs = {'class': "form-control", 'placeholder': field.label}
+
+
+def user_modelform_add(request):
+    form = UserModelForm()
+    return render(request, 'user_modelform_add.html', {'form': form})
