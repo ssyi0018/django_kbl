@@ -3,6 +3,8 @@ import requests
 from scApp import models
 from pptx import Presentation
 from django import forms
+from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
 
 
 # Create your views here.
@@ -203,7 +205,7 @@ def depart_edit(request, nid):
 
 
 def user_list(request):
-    queryset = models.UserInfo.objects.all()
+    queryset = models.UserInfo.objects.all().order_by('id')
     # for obj in queryset:
     #     # obj.get_gender_display() 自动找定义的元组数据
     #     # obj.depart.title  # 获取关联表数据
@@ -237,11 +239,22 @@ def user_add(request):
     return redirect("/user/list/")
 
 
-# 使用modelform生成页面input框
+# 使用modelform生成页面input框,编辑class可以另外再写一个，需要用的进行实例化即可
 class UserModelForm(forms.ModelForm):
+    # 输入长度验证规则
+    name = forms.CharField(min_length=5, label='姓名')
+    # name = forms.CharField(disabled=True,label='姓名')  # 字段不可修改，或者直接在下面fields里去掉这个字段名即可
+    # 正则表达式输入验证(方式一)
+    age = forms.CharField(label='年龄啊',
+                          validators=[RegexValidator(r'^[0-9]+$', '年龄请输入数字')]
+                          )
+
     class Meta:
         model = models.UserInfo
         fields = ['name', 'password', 'age', 'account', 'create_time', 'gender', 'depart', 'role']
+        # fields = '__all__'  # 表示所有的字段
+        # exclude = ['age']  # 排除某个字段
+
         # 插件里加样式
         # widgets = {
         #     'name': forms.TextInput(attrs={'class': "form-control"}),
@@ -258,7 +271,58 @@ class UserModelForm(forms.ModelForm):
                 continue
             field.widget.attrs = {'class': "form-control", 'placeholder': field.label}
 
+    # 验证方式二(钩子方法)
+    def clean_password(self):
+        txt_pwd = self.cleaned_data['password']
+        if len(txt_pwd) != 6:
+            raise ValidationError("输入的位数错误")
+        # 验证通过
+        return txt_pwd
+
+    # 判断姓名不允许重复(新建和编辑)
+    def clean_name(self):
+        # 排除当前编辑的一行ID exclude(self.instance.pk)
+
+        txt_name = self.cleaned_data['name']
+        exName = models.UserInfo.objects.exclude(id=self.instance.pk).filter(name=txt_name).exists()
+        if exName:
+            raise ValidationError('姓名不允许重复')
+        return txt_name
+
 
 def user_modelform_add(request):
-    form = UserModelForm()
-    return render(request, 'user_modelform_add.html', {'form': form})
+    if request.method == 'GET':
+        form = UserModelForm()
+        return render(request, 'user_modelform_add.html', {'form': form})
+
+    # POST进行提交后校验
+    form = UserModelForm(data=request.POST)
+    if form.is_valid():
+        # print(form.cleaned_data)
+        form.save()
+        return redirect("/user/list/")
+    else:
+        return render(request, 'user_modelform_add.html', {'form': form})
+
+
+def user_modelform_edit(request, nid):
+    # 根据ID去数据库获取那一行数据（对象）
+    row_object = models.UserInfo.objects.filter(id=nid).first()
+
+    if request.method == 'GET':
+        form1 = UserModelForm(instance=row_object)  # 实例化后获取默认值
+        return render(request, 'user_modelform_edit.html', {'form': form1})  # 把数据传到html里
+    # 更新这一行数据
+    form = UserModelForm(data=request.POST, instance=row_object)
+    if form.is_valid():
+        # 如果不是界面需要输入的值保存，可以用
+        # form.instance.字段名 = '某个值'
+        form.save()
+        return redirect("/user/list/")
+    else:
+        return render(request, 'user_modelform_add.html', {'form': form})
+
+
+def user_modelform_del(request, nid):
+    models.UserInfo.objects.filter(id=nid).delete()
+    return redirect("/user/list/")
