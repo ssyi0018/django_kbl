@@ -205,14 +205,22 @@ def depart_edit(request, nid):
 
 
 def user_list(request):
-    queryset = models.UserInfo.objects.all().order_by('id')
+    # 通过url传参数搜索查询功能实现
+    data_dict = {}
+    search_data = request.GET.get('query', '')
+    if search_data:
+        data_dict['name__contains'] = search_data
+    queryset = models.UserInfo.objects.filter(**data_dict).order_by('id')
+    # queryset = models.UserInfo.objects.filter(name__contains=value)
+    # print(queryset)
+
     # for obj in queryset:
     #     # obj.get_gender_display() 自动找定义的元组数据
     #     # obj.depart.title  # 获取关联表数据
     #     print(obj.create_time.strftime('%Y-%m-%d'), obj.get_gender_display(),
     #           obj.depart.title
     #           )
-    return render(request, 'user_list.html', {'queryset01': queryset})
+    return render(request, 'user_list.html', {'queryset01': queryset, 'search_data': search_data})
 
 
 def user_add(request):
