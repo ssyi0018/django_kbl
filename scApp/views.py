@@ -218,7 +218,10 @@ def user_list(request):
         data_dict['name__contains'] = search_data
 
     # 分页
-    page = int(request.GET.get('page', 1))  # 当前页
+    try:
+        page = int(request.GET.get('page', 1))  # 分页
+    except  ValueError:
+        page = 1
     page_size = 10  # 每页显示数据
     start = (page - 1) * page_size
     end = page * page_size
@@ -277,6 +280,20 @@ def user_list(request):
     page_list.append(prev)
 
     page_list.append('<li><a href="?page={}">尾页</a></li>'.format(total_page))
+
+    search_tz = '''
+                 <li>
+                    <form style="float: left;margin-left: -1px" method="get">
+                        <input name="page"
+                               style="position: relative;float: left;display: inline-block;width: 80px;border-radius: 0;"
+                               type="text" class="form-control" placeholder="页码">
+                        <button style="border-radius: 0" class="btn btn-default" type="submit">跳转</button>
+                        </span>
+                    </form>
+                </li>
+    '''
+    page_list.append(search_tz)
+
     # 导入mark_safe，把数据包裹成安全的传递给html
     page_string = mark_safe(''.join(page_list))
 
@@ -364,8 +381,8 @@ class UserModelForm(forms.ModelForm):
         # 排除当前编辑的一行ID exclude(self.instance.pk)
 
         txt_name = self.cleaned_data['name']
-        exName = models.UserInfo.objects.exclude(id=self.instance.pk).filter(name=txt_name).exists()
-        if exName:
+        exname = models.UserInfo.objects.exclude(id=self.instance.pk).filter(name=txt_name).exists()
+        if exname:
             raise ValidationError('姓名不允许重复')
         return txt_name
 

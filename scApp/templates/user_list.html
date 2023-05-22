@@ -69,17 +69,19 @@
                 </tbody>
             </table>
         </div>
-
-        <ul class="pagination">
-            {{ page_string }}
-        </ul>
-    <form method="get">
-        <div class="input-group" style="width: 200px">
-            <input type="text" name="page" class="form-control" placeholder="页码">
-            <span class="input-group-btn">
-                <button class="btn btn-default" type="submit">跳转</button>
-            </span>
+        <div class="clearfix">
+            <ul class="pagination" style="float: left;">
+                {{ page_string }}
+             <!--   <li>
+                    <form style="float: left;margin-left: -1px" method="get">
+                        <input name="page"
+                               style="position: relative;float: left;display: inline-block;width: 80px;border-radius: 0;"
+                               type="text" class="form-control" placeholder="页码">
+                        <button style="border-radius: 0" class="btn btn-default" type="submit">跳转</button>
+                        </span>
+                    </form>
+                </li>  -->
+            </ul>
         </div>
-    </form>
     </div>
 {% endblock %}
