@@ -207,7 +207,8 @@ def depart_edit(request, nid):
 
 def user_list(request):
     # for i in range(30):
-    #     models.UserInfo.objects.create(name='test002', password='123456', age='22', account='12', create_time='20230522',
+    #     models.UserInfo.objects.create(name='test002', password='123456', age='22', account='12',
+    #                                    create_time='2023-05-22',
     #                                    gender='2', depart_id='2', role_id='2', )
 
     # 通过url传参数搜索查询功能实现
@@ -216,25 +217,66 @@ def user_list(request):
     if search_data:
         data_dict['name__contains'] = search_data
 
-
+    # 分页
+    page = int(request.GET.get('page', 1))  # 当前页
+    page_size = 10  # 每页显示数据
+    start = (page - 1) * page_size
+    end = page * page_size
 
     # 数据总条数
     total_num = models.UserInfo.objects.filter(**data_dict).order_by('id').count()
 
-    # 分页
-    page = int(request.GET.get('page', 1))
-    page_size = 10  # 每页显示数据
-    start = (page - 1) * page_size
-    end = page * page_size
-    # 计算出总页码divmod函数计算商和余数
+    # 计算出总页码 divmod函数计算商和余数
     total_page, div = divmod(total_num, page_size)
     if div:
         total_page += 1
+
+    # 根据当前页计算出前后5页
+    plus = 5
+    if total_page <= 2 * plus + 1:
+        # 当数据库数据少的时候，没有达到11页
+        start_page = 1
+        end_page = total_page
+    else:
+        # 数据库数据比较多，判断当前页,<5
+        if page <= plus:
+            start_page = 1
+            end_page = 2 * plus
+        else:
+            # 当前页大于5
+            if (page + plus) > total_page:
+                start_page = total_page - 2 * plus
+                end_page = total_page
+            else:
+                start_page = page - plus
+                end_page = page + plus
+
     # 页码
     page_list = []
-    for i in range(1, total_page + 1):
-        ele = '<li><a href="?page={}">{}</a></li>'.format(i, i)
+    page_list.append('<li><a href="?page={}">首页</a></li>'.format(1))
+    # 上一页
+    if page > 1:
+        prev = '<li><a href="?page={}">上一页</a></li>'.format(page - 1)
+    else:
+        prev = '<li><a href="?page={}">上一页</a></li>'.format(1)
+    page_list.append(prev)
+
+    # 分页页面
+    for i in range(start_page, end_page + 1):
+        if i == page:
+            ele = '<li class="active"><a href="?page={}">{}</a></li>'.format(i, i)
+        else:
+            ele = '<li><a href="?page={}">{}</a></li>'.format(i, i)
         page_list.append(ele)
+
+    # 下一页
+    if page < total_page:
+        prev = '<li><a href="?page={}">下一页</a></li>'.format(page + 1)
+    else:
+        prev = '<li><a href="?page={}">下一页</a></li>'.format(total_page)
+    page_list.append(prev)
+
+    page_list.append('<li><a href="?page={}">尾页</a></li>'.format(total_page))
     # 导入mark_safe，把数据包裹成安全的传递给html
     page_string = mark_safe(''.join(page_list))
 
@@ -247,7 +289,6 @@ def user_list(request):
     #     print(obj.create_time.strftime('%Y-%m-%d'), obj.get_gender_display(),
     #           obj.depart.title
     #           )
-
     queryset = models.UserInfo.objects.filter(**data_dict).order_by('id')[start:end]
 
     return render(request, 'user_list.html', {'queryset01': queryset, 'search_data': search_data,
