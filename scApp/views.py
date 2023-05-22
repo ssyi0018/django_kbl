@@ -5,6 +5,7 @@ from pptx import Presentation
 from django import forms
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
+from django.utils.safestring import mark_safe
 
 
 # Create your views here.
@@ -205,13 +206,39 @@ def depart_edit(request, nid):
 
 
 def user_list(request):
+    # for i in range(30):
+    #     models.UserInfo.objects.create(name='test002', password='123456', age='22', account='12', create_time='20230522',
+    #                                    gender='2', depart_id='2', role_id='2', )
+
     # 通过url传参数搜索查询功能实现
     data_dict = {}
     search_data = request.GET.get('query', '')
     if search_data:
         data_dict['name__contains'] = search_data
-    queryset = models.UserInfo.objects.filter(**data_dict).order_by('id')
-    # queryset = models.UserInfo.objects.filter(name__contains=value)
+
+
+
+    # 数据总条数
+    total_num = models.UserInfo.objects.filter(**data_dict).order_by('id').count()
+
+    # 分页
+    page = int(request.GET.get('page', 1))
+    page_size = 10  # 每页显示数据
+    start = (page - 1) * page_size
+    end = page * page_size
+    # 计算出总页码divmod函数计算商和余数
+    total_page, div = divmod(total_num, page_size)
+    if div:
+        total_page += 1
+    # 页码
+    page_list = []
+    for i in range(1, total_page + 1):
+        ele = '<li><a href="?page={}">{}</a></li>'.format(i, i)
+        page_list.append(ele)
+    # 导入mark_safe，把数据包裹成安全的传递给html
+    page_string = mark_safe(''.join(page_list))
+
+    # queryset = models.UserInfo.objects.filter(name__contains=search_data)
     # print(queryset)
 
     # for obj in queryset:
@@ -220,7 +247,11 @@ def user_list(request):
     #     print(obj.create_time.strftime('%Y-%m-%d'), obj.get_gender_display(),
     #           obj.depart.title
     #           )
-    return render(request, 'user_list.html', {'queryset01': queryset, 'search_data': search_data})
+
+    queryset = models.UserInfo.objects.filter(**data_dict).order_by('id')[start:end]
+
+    return render(request, 'user_list.html', {'queryset01': queryset, 'search_data': search_data,
+                                              'page_string': page_string})
 
 
 def user_add(request):
