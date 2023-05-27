@@ -1,5 +1,10 @@
 {% extends 'layout.html' %}
 
+{% load static %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css' %}">
+{% endblock %}
+
 {% block content %}
     <div class="container">
         <div class="panel panel-default">
@@ -7,7 +12,7 @@
                 <h3 class="panel-title">新建用户</h3>
             </div>
             <div class="panel-body">
-            <!-- 不让浏览器做校验 -->
+                <!-- 不让浏览器做校验 -->
                 <form method="post" novalidate>
                     {% csrf_token %}
                     {% for field in form %}
@@ -23,4 +28,23 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'plugins/bootstrap-datepicker/js/bootstrap-datepicker.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js' %}"></script>
+    <script>
+        $(function () {
+            $('#id_create_time').datepicker({
+                format: 'yyyy-mm-dd',
+                startDate: '0',
+                language: 'zh-CN',
+                // todayBtn: true, //显示今日按钮
+                autoclose: true,
+                // todayHighlight: true, // 今日高亮显示
+                // minView: "month", // 最小视图为月份，如果为 day 的话还会让你选小时
+
+            })
+        })
+    </script>
 {% endblock %}

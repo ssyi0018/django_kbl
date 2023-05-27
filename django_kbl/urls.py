@@ -14,41 +14,43 @@ Including another URLconf
     1. Import to include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import path
-from scApp import views
+from scApp.views import user, depart, other, admin
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    path('index/', views.index),
+    path('index/', other.index),
     # path('user/list/', views.user_list),
     # path('user/add/', views.user_add),
-    path('tpl/', views.tpl),
-    path('news/', views.news),
-    path('something/', views.something),
+    path('tpl/', other.tpl),
+    path('news/', other.news),
+    path('something/', other.something),
 
     # 用户登陆
-    path('login/', views.login),
-    path('login/list/', views.login_list),
-    path('login/add/', views.login_add),
-    path('login/del/', views.login_del),
+    path('login/', other.login),
+    path('login/list/', other.login_list),
+    path('login/add/', other.login_add),
+    path('login/del/', other.login_del),
 
     # 数据库操作
-    path('orm/', views.orm),
+    path('orm/', other.orm),
 
     # ppt展示
-    path('ppt/', views.ppt_view),
+    path('ppt/', other.ppt_view),
 
     # 部门列表
-    path('depart/list/', views.depart_list),
-    path('depart/add/', views.depart_add),
-    path('depart/del/', views.depart_del),
-    path('depart/<int:nid>/edit/', views.depart_edit),
+    path('depart/list/', depart.depart_list),
+    path('depart/add/', depart.depart_add),
+    path('depart/del/', depart.depart_del),
+    path('depart/<int:nid>/edit/', depart.depart_edit),
 
     # 用户管理
-    path('user/list/', views.user_list),
-    path('user/add/', views.user_add),
-    path('user/modelform/add/', views.user_modelform_add),
-    path('user/<int:nid>/edit/', views.user_modelform_edit),
-    path('user/<int:nid>/del/', views.user_modelform_del),
+    path('user/list/', user.user_list),
+    path('user/add/', user.user_add),
+    path('user/modelform/add/', user.user_modelform_add),
+    path('user/<int:nid>/edit/', user.user_modelform_edit),
+    path('user/<int:nid>/del/', user.user_modelform_del),
+
+    # 管理员
+    path('admin/list/', admin.admin_list),
 ]

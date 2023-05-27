@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect
-import requests,copy
+import requests
 from scApp import models
 from pptx import Presentation
 from django import forms
@@ -7,6 +7,8 @@ from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 from scApp.utils.pagination import Pagination
+from scApp.utils.bootstrap import BootStrapModelForm
+from scApp.utils.form import UserModelForm
 
 
 # Create your views here.
@@ -222,7 +224,7 @@ def user_list(request):
     queryset = models.UserInfo.objects.filter(**data_dict).order_by('id')
 
     # 调用分页封装函数,实例化对象
-    page_object = Pagination(request, queryset,page_size=9)
+    page_object = Pagination(request, queryset, page_size=9)
 
     # 定义一个字典
     context = {'queryset01': page_object.page_queryset, 'search_data': search_data,
@@ -346,9 +348,14 @@ def user_add(request):
 
 
 # 使用modelform生成页面input框,编辑class可以另外再写一个，需要用的进行实例化即可
-class UserModelForm(forms.ModelForm):
+# class UserModelForm(forms.ModelForm):
+
+# 继承自定义的modelform样式
+class UserModelForm(BootStrapModelForm):
     # 输入长度验证规则
-    name = forms.CharField(min_length=5, label='姓名')
+    name = forms.CharField(min_length=5,
+                           label='姓名',
+                           widget=forms.TextInput(attrs={'class': "form-control"}))
     # name = forms.CharField(disabled=True,label='姓名')  # 字段不可修改，或者直接在下面fields里去掉这个字段名即可
     # 正则表达式输入验证(方式一)
     age = forms.CharField(label='年龄啊',
@@ -368,14 +375,15 @@ class UserModelForm(forms.ModelForm):
         # }
 
     # 重写方法，循环找所有插件，进行重写class样式
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        for name, field in self.fields.items():
-            # print(name, field)
-            if name == 'role':
-                continue
-            field.widget.attrs = {'class': "form-control", 'placeholder': field.label}
+    # def __init__(self, *args, **kwargs):
+    #     super(UserModelForm, self).__init__(*args, **kwargs)
+    #
+    #     for name, field in self.fields.items():
+    #         # print(name, field)
+    #         # 单独设置role角色不显示样式
+    #         if name == 'role':
+    #             continue
+    #         field.widget.attrs = {'class': "form-control", 'placeholder': field.label}
 
     # 验证方式二(钩子方法)
     def clean_password(self):
