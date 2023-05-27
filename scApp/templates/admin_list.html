@@ -36,6 +36,7 @@
                     <th>ID</th>
                     <th>用户名</th>
                     <th>密码</th>
+                    <th>重置密码</th>
                     <th>操作</th>
                 </tr>
                 </thead>
@@ -47,7 +48,10 @@
                         <td>******</td>
                         <td>
                             <a class="btn btn-primary btn-xs" href="/admin/{{ foo.id }}/edit/">编辑</a>
-                            <a class="btn btn-danger btn-xs" href="#">删除</a>
+                            <a class="btn btn-danger btn-xs" href="/admin/{{ foo.id }}/del/">删除</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-group-xs btn-xs" href="/admin/{{ foo.id }}/reset/">重置密码</a>
                         </td>
                     </tr>
                 {% endfor %}
