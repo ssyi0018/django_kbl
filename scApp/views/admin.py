@@ -34,6 +34,12 @@ class AdminForm(BootStrapModelForm):
         return confirm
 
 
+class AdminEditForm(BootStrapModelForm):
+    class Meta:
+        model = models.Admin
+        fields = ['username']
+
+
 def admin_list(request):
     # 搜索
     # 通过url传参数搜索查询功能实现
@@ -60,6 +66,27 @@ def admin_add(request):
         return render(request, 'add_public.html', {'form': form, 'title': title})
     # POST进行提交后校验
     form = AdminForm(data=request.POST)
+    if form.is_valid():
+        # print(form.cleaned_data) # 获取验证通过的所有数据，字典值
+        form.save()
+        return redirect("/admin/list/")
+    else:
+        return render(request, 'add_public.html', {'form': form, 'title': title})
+
+
+def admin_edit(request, nid):
+    # 获取对象
+    row_object = models.Admin.objects.filter(id=nid).first()
+    if not row_object:
+        return render(request, 'error.html', {'msg': '数据不存在！'})
+        # return redirect("/admin/list/")
+    title = '编辑管理员'
+    # 如果新增和删除使用一个form，可以用AdminForm，如果不一样用AdminEditForm
+    if request.method == 'GET':
+        form = AdminEditForm(instance=row_object)  # instance设置默认值
+        return render(request, 'add_public.html', {'form': form, 'title': title})
+
+    form = AdminEditForm(data=request.POST,instance=row_object)
     if form.is_valid():
         # print(form.cleaned_data) # 获取验证通过的所有数据，字典值
         form.save()
