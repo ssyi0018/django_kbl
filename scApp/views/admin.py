@@ -66,6 +66,8 @@ class AdminResetForm(BootStrapModelForm):
     def clean_confirm_password(self):
         pwd = self.cleaned_data.get('password')
         # pwd = self.clean_password()
+        if not pwd:
+            return None
         confirm = md5(self.cleaned_data.get('confirm_password'))
         if confirm != pwd:
             raise ValidationError('密码不一致，请重新输入')
