@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import random
 
+# 验证码生成
 
 def check_code(width=120, height=30, char_length=5, font_file='Monaco.ttf', font_size=28):
     code = []
