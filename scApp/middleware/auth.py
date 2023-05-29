@@ -2,7 +2,7 @@ from django.utils.deprecation import MiddlewareMixin
 from django.shortcuts import HttpResponse, redirect
 
 
-# 中间件类修改
+# 中间件类修改,设置页面权限访问
 
 class AuthMiddleWare(MiddlewareMixin):
     def process_request(self, request):
