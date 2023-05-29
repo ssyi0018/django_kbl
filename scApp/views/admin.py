@@ -76,6 +76,11 @@ class AdminResetForm(BootStrapModelForm):
 
 
 def admin_list(request):
+    # 获取用户请求里的cookie，检查session中有没有，可在中间件里写，不用每个页面都写
+    # info = request.session.get('info')
+    # if not info:
+    #     return redirect("/login/")
+
     # 搜索
     # 通过url传参数搜索查询功能实现
     data_dict = {}

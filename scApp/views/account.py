@@ -3,6 +3,8 @@ from django import forms
 from scApp.utils.bootstrap import BootStrapForm
 from scApp.utils.encrypt import md5
 from scApp import models
+from scApp.utils.code import check_code
+from io import BytesIO
 
 
 class LoginForm(BootStrapForm):
@@ -26,7 +28,7 @@ def login(request):
     else:
         form = LoginForm(data=request.POST)
         if form.is_valid():
-            print(form.cleaned_data)
+            # print(form.cleaned_data)
             # 钩子方法里验证成功，获取用户名和密码
             # 直接在models里写
             # admin_object = models.Admin.objects.filter(username=form.cleaned_data['username'],
@@ -41,3 +43,18 @@ def login(request):
             request.session['info'] = {'id': admin_object.id, 'name': admin_object.username}
             return redirect('/admin/list')
         return render(request, 'login.html', {'form': form})
+
+
+def image_code(request):
+    # 调用图片验证码
+    img, code_string = check_code()
+    # 创建一个内存文件
+    stream = BytesIO()
+    # 图片写入内存中
+    img.save(stream, 'png')
+    return HttpResponse(stream.getvalue())
+
+
+def logout(request):
+    request.session.clear()
+    return redirect('/login/')

@@ -28,6 +28,8 @@ urlpatterns = [
 
     # 用户登陆
     path('login/', account.login),
+    path('logout/', account.logout),
+    path('image/code/',account.image_code),
     path('login/list/', other.login_list),
     path('login/add/', other.login_add),
     path('login/del/', other.login_del),
