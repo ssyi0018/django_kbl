@@ -12,7 +12,7 @@
                                 <div class="form-group" style="position: relative; margin-bottom: 20px">
                                     <label>{{ field.label }}</label>
                                     {{ field }}
-                                    <span style="color: red;position: absolute;"></span>
+                                    <span class="error-msg" style="color: red;position: absolute;"></span>
                                 </div>
                             </div>
                         {% endfor %}
@@ -24,7 +24,45 @@
             </div>
         </div>
 
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                任务列表
+            </div>
 
+            <!-- Table -->
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>标题</th>
+                    <th>级别</th>
+                    <th>负责人</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for foo in  queryset %}
+                    <tr>
+                        <th>{{ foo.id }}</th>
+                        <td>{{ foo.title }}</td>
+                        <td>{{ foo.get_level_display }}</td>
+                        <td>{{ foo.user.username }}</td>
+                        <td>
+                            <a class="btn btn-primary btn-xs" href="#">编辑</a>
+                            <a class="btn btn-danger btn-xs" href="#">删除</a>
+                        </td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <ul class="pagination">
+            {{ page_string }}
+        </ul>
+
+        <div style="height: 1000px"></div>
         <hr/>
         <h1>Ajax学习</h1>
         <h3>示例1</h3>
@@ -118,6 +156,7 @@
         // 绑定按钮btnAdd
         function bindBtnAddEvent() {
             $('#btnAdd').click(function () {
+                $('.error-msg').empty();
                 $.ajax({
                     url: '/task/add/',
                     type: 'post',
@@ -125,9 +164,10 @@
                     data: $('#formAdd').serialize(),
                     dataType: 'JSON',
                     success: function (res) {
-
                         if (res.status) {
                             alert('添加成功')
+                            //页面刷新
+                            location.reload();
                         } else {
                             $.each(res.error, function (name, data) {
                                 $('#id_' + name).next().text(data[0]);

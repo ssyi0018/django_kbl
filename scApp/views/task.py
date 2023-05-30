@@ -5,8 +5,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from scApp.utils.bootstrap import BootStrapModelForm
 from scApp import models
-from collections import OrderedDict
-from django.forms.utils import ErrorDict
+from scApp.utils.pagination import Pagination
 
 
 class TaskModelForm(BootStrapModelForm):
@@ -19,10 +18,19 @@ class TaskModelForm(BootStrapModelForm):
 
 
 def task_list(request):
+    # 获取数据库所有任务
+    queryset = models.Task.objects.all().order_by('-id')
+    # 分页
+    page_object = Pagination(request, queryset, page_size=2)
     form = TaskModelForm()
     # 对字段进行排序
     form.order_fields(['level', 'title', 'detail', 'user'])
-    return render(request, 'task_list.html', {'form': form})
+
+    context = {'form': form,
+               'queryset': page_object.page_queryset,
+               'page_string': page_object.html(),
+               }
+    return render(request, 'task_list.html', context)
 
 
 # @csrf_exempt免除post请求的csrf认证
@@ -46,6 +54,7 @@ def task_add(request):
     form = TaskModelForm(data=request.POST)
     if form.is_valid():
         form.save()
+        # 返回到Ajax里res
         data_dict = {'status': True}
         return HttpResponse(json.dumps(data_dict))
 
