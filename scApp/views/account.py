@@ -52,7 +52,7 @@ def login(request):
             # 登录成功，cookie和session处理
             request.session['info'] = {'id': admin_object.id, 'name': admin_object.username}
             # 1天免登陆，session保存1天
-            request.session.set_expiry(60 * 60 * 24)
+            request.session.set_expiry(60 * 60 * 60)
             return redirect('/admin/list')
         return render(request, 'login.html', {'form': form})
 
