@@ -78,7 +78,7 @@ class Task(models.Model):
 
 
 class Order(models.Model):
-    oid = models.CharField(verbose_name='订单号', max_length=64)
+    oid = models.CharField(verbose_name='订单号', max_length=64, blank=False)
     title = models.CharField(verbose_name='订单名称', max_length=32)
     price = models.IntegerField(verbose_name='订单价格')
 
