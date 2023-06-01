@@ -3,7 +3,7 @@
 {% block content %}
     <div class="container">
         <div style="margin-bottom: 10px">
-            <input id="btnAdd" type="button" value="新建订单" class="btn btn-primary">
+            <input id="btnAdd" type="button" value="新建订单" class="btn btn-success">
             {#            <input id="btnAdd" type="button" value="新建订单" class="btn btn-primary" data-toggle="modal"#}
             {#                   data-target="#myModal">#}
         </div>
@@ -109,6 +109,8 @@
 {% block js %}
     <script type="text/javascript">
         var delete_id;
+        //根据全局变量edit有没有值判断新增还是修改
+        var edit_id;
 
         $(function () {
             bindBtnAddEvent();
@@ -120,6 +122,8 @@
 
         function bindBtnAddEvent() {
             $('#btnAdd').click(function () {
+                // 将编辑id置为空
+                edit_id = undefined;
                 // 清空对话框中数据
                 $('#formAdd')[0].reset();
                 $('#myModalLabel').text('新建订单');
@@ -130,30 +134,73 @@
 
         function bindBtnSaveEvent() {
             $('#btnSave').click(function () {
+                // 清除错误信息
                 $('.error-msg').empty();
-                $.ajax({
-                    url: '/order/add/',
-                    type: 'post',
-                    data: $('#formAdd').serialize(),
-                    dataType: 'JSON',
-                    success: function (res) {
-                        if (res.status) {
-                            alert('添加成功');
-                            // 清空表单
-                            $('#formAdd')[0].reset();
-                            // 关闭对话框
-                            $('#myModal').modal('hide');
-                            //页面刷新
-                            location.reload();
+
+                if (edit_id) {
+                    //编辑
+                    doEdit();
+                } else {
+                    //添加
+                    doAdd();
+                }
+
+
+            })
+        }
+
+        function doAdd() {
+            $.ajax({
+                url: '/order/add/',
+                type: 'post',
+                data: $('#formAdd').serialize(),
+                dataType: 'JSON',
+                success: function (res) {
+                    if (res.status) {
+                        alert('添加成功');
+                        // 清空表单
+                        $('#formAdd')[0].reset();
+                        // 关闭对话框
+                        $('#myModal').modal('hide');
+                        //页面刷新
+                        location.reload();
+                    } else {
+                        $.each(res.error, function (name, errorList) {
+                            $('#id_' + name).next().text(errorList[0]);
+                        })
+                    }
+                }
+            })
+        }
+
+        function doEdit() {
+            $.ajax({
+                url: '/order/edit/' + '?uid=' + edit_id,
+                type: 'post',
+                data: $('#formAdd').serialize(),
+                dataType: 'JSON',
+                success: function (res) {
+                    if (res.status) {
+                        alert('修改成功');
+                        // 清空表单
+                        $('#formAdd')[0].reset();
+                        // 关闭对话框
+                        $('#myModal').modal('hide');
+                        //页面刷新
+                        location.reload();
+                    } else {
+                        if (res.tips) {
+                            alert(res.tips);
                         } else {
                             $.each(res.error, function (name, errorList) {
                                 $('#id_' + name).next().text(errorList[0]);
                             })
                         }
                     }
-                })
+                }
             })
         }
+
 
         //点击删除按钮
         function bindBtnDeleteEvent() {
@@ -204,6 +251,7 @@
                 // 清空对话框中数据
                 $('#formAdd')[0].reset();
                 var currentId = $(this).attr('uid');
+                edit_id = currentId;
                 //发送ajax去后台发送当前行数据
                 $.ajax({
                     url: '/order/detail/',

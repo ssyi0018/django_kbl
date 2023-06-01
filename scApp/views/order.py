@@ -33,6 +33,7 @@ def order_list(request):
 def order_add(request):
     form = OrderModelForm(data=request.POST)
     if form.is_valid():
+        # 非页面上提交的字段
         form.instance.oid = datetime.now().strftime('%Y%m%d%H%M%S') + str(random.randint(1000, 9999))
         # 获取account里登陆的session中id
         form.instance.admin_id = request.session['info']['id']
@@ -61,7 +62,7 @@ def order_detail(request):
     # 方式一
     # row_object = models.Order.objects.filter(id=uid).first()
     # 方式二，数据库获得字典
-    row_dict = models.Order.objects.filter(id=uid).values('title','price','status').first()
+    row_dict = models.Order.objects.filter(id=uid).values('title', 'price', 'status').first()
     if not dict:
         return JsonResponse({'status': False, 'error': '数据不存在！'})
     # 获取数据库中对象row_object
@@ -74,8 +75,22 @@ def order_detail(request):
     #     }
     # }
     result = {
-        'status':True,
-        'data':row_dict,
+        'status': True,
+        'data': row_dict,
     }
     # 给前端res数据
     return JsonResponse(result)
+
+
+@csrf_exempt
+def order_edit(request):
+    uid = request.GET.get('uid')
+    row_object = models.Order.objects.filter(id=uid).first()
+    if not row_object:
+        return JsonResponse({'status': False, 'tips': '数据不存在，请刷新重试！'})
+
+    form = OrderModelForm(data=request.POST, instance=row_object)
+    if form.is_valid():
+        form.save()
+        return JsonResponse({'status': True})
+    return JsonResponse({'status': False, 'error': form.errors})
