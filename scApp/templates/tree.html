@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .menus {
+            width: 200px;
+            height: 800px;
+            border: 1px solid #a7c7e3;
+        }
+
+        .menus .header {
+            background-color: #a9c4d7;
+            padding: 10px 5px;
+            border-bottom: 1px dotted #dddddd;
+            cursor:pointer;
+        }
+
+        .menus .content a {
+            display: block;
+            padding: 5px 30px;
+            border-bottom: 1px dotted #dddddd;
+        }
+
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="menus">
+    <div class="item">
+        <div class="header" onclick="clickMe(this)">售前资料</div>
+        <div class="content">
+            <a>公司白皮书</a>
+            <a>公司其它项目介绍</a>
+            <a>公司券商项目介绍</a>
+            <a>公司自研产品介绍</a>
+        </div>
+    </div>
+
+    <div class="item">
+        <div class="header" onclick="clickMe(this)">售前资料1</div>
+        <div class="content hide">
+            <a>公司白皮书</a>
+            <a>公司其它项目介绍</a>
+            <a>公司券商项目介绍</a>
+            <a>公司自研产品介绍</a>
+        </div>
+    </div>
+
+    <div class="item">
+        <div class="header" onclick="clickMe(this)">售前资料2</div>
+        <div class="content hide">
+            <a>公司白皮书</a>
+            <a>公司其它项目介绍</a>
+            <a>公司券商项目介绍</a>
+            <a>公司自研产品介绍</a>
+        </div>
+    </div>
+
+
+</div>
+<script src="{% static 'js/jquery-3.6.4.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-3.4.1/js/bootstrap.js' %}"></script>
+
+<script type="text/javascript">
+    function clickMe(self) {
+        // 寻找标签
+        var hasHide = $(self).next().hasClass('hide')
+        if (hasHide){
+            $(self).next().removeClass('hide');
+        }else{
+            $(self).next().addClass('hide');
+        }
+        $(self).parent().siblings().find('.content').addClass('hide');
+    }
+</script>
+</body>
+</html>

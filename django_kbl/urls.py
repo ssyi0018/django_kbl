@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
-from scApp.views import user, depart, other, admin, account, task, order
+from scApp.views import user, depart, other, admin, account, task, order, chart
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
@@ -71,4 +71,13 @@ urlpatterns = [
     path('order/delete/', order.order_delete),
     path('order/detail/', order.order_detail),
     path('order/edit/', order.order_edit),
+
+    path('order/tree/', order.order_tree),
+
+    # 数据统计
+    path('chart/list/', chart.chart_list),
+    path('chart/bar/', chart.chart_bar),
+    path('chart/pie/', chart.chart_pie),
+    path('chart/line/', chart.chart_line),
+
 ]

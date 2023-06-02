@@ -94,3 +94,7 @@ def order_edit(request):
         form.save()
         return JsonResponse({'status': True})
     return JsonResponse({'status': False, 'error': form.errors})
+
+
+def order_tree(request):
+    return render(request, 'tree.html')
