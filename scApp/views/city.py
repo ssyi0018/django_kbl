@@ -3,6 +3,8 @@ from scApp import models
 from scApp.utils.bootstrap import BootStrapModelForm
 from django import forms
 from django.core.files.storage import FileSystemStorage
+from django.conf import settings
+
 
 def city_list(request):
     queryset = models.City.objects.all()
@@ -37,10 +39,10 @@ def city_add(request):
     if form.is_valid():
         file_ext = request.FILES['img'].name.split('.')[-1]
         if file_ext == 'xls' or file_ext == 'xlsx':
-            fs = FileSystemStorage()
-            filename = fs.save(request.FILES['img'].name, request.FILES['img'])
-            uploaded_file_url = fs.url(filename)
-            form.instance.img = uploaded_file_url
+            # fs = FileSystemStorage(location=settings.MEDIA_ROOT)
+            # filename = fs.save(request.FILES['img'].name, request.FILES['img'])
+            # uploaded_file_url = fs.url(filename)
+            form.instance.img.name = request.FILES['img'].name
         form.save()
         return redirect('/city/list/')
     return render(request, 'upload_form.html', {'form': form, 'title': title})
