@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+    <div class="container">
+
+        <div style="margin-bottom: 10px">
+            <a class="btn btn-success" href="/city/add/">
+                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+                新建城市
+            </a>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                城市列表
+            </div>
+
+            <!-- Table -->
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>名称</th>
+                    <th>人口</th>
+                    <th>LOGO</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                {% for foo in queryset %}
+                    <tr>
+                        <th>{{ foo.id }}</th>
+                        <td>{{ foo.name }}</td>
+                        <td>{{ foo.count }}</td>
+                        <td>
+                            {% if foo.img.url|slice:"-4:" == ".xls" or foo.img.url|slice:"-5:" == ".xlsx" %}
+                                <img src="{% static '/img/excel_icon.jpg' %}" style="height: 80px;">
+                            {% else %}
+                                <img src="{{ foo.img.url }}" style="height: 80px;">
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

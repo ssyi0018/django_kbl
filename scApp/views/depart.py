@@ -1,5 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
 from scApp import models
+from openpyxl import load_workbook
 
 
 def depart_list(request):
@@ -34,4 +35,21 @@ def depart_edit(request, nid):
     # 获取post提交内容
     name = request.POST.get('title')
     models.Department.objects.filter(id=nid).update(title=name)
+    return redirect("/depart/list/")
+
+
+def depart_multi(request):
+    # 获取html中input框中的上传的对象，从前面input中name获取
+    file_object = request.FILES.get('exc')
+    wb = load_workbook(file_object)
+    sheet = wb.worksheets[0]
+
+    # 循环读取excel内容并写入数据库中
+    for row in sheet.iter_rows(min_row=2):
+        text = row[0].value
+        exists = models.Department.objects.filter(title=text).exists()
+        if not exists:
+            models.Department.objects.create(title=text)
+    # cell = sheet.cell(2, 1)
+    # print(cell.value)
     return redirect("/depart/list/")

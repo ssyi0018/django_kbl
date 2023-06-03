@@ -48,6 +48,7 @@ def chart_pie(request):
     # 把值传到前端
     return JsonResponse(result)
 
+
 def chart_line(request):
     legend = ['上海', '深圳']
     series_list = [

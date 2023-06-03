@@ -88,3 +88,16 @@ class Order(models.Model):
     )
     status = models.SmallIntegerField(verbose_name='订单状态', choices=status_choices, default=1)
     admin = models.ForeignKey(verbose_name='管理员', to='Admin', on_delete=models.CASCADE)
+
+
+class Boss(models.Model):
+    name = models.CharField(verbose_name='姓名', max_length=32)
+    age = models.IntegerField(verbose_name='年龄')
+    img = models.CharField(verbose_name='头像', max_length=128)
+
+
+class City(models.Model):
+    name = models.CharField(verbose_name='名称', max_length=32)
+    count = models.IntegerField(verbose_name='人口')
+    # 自动保存数据
+    img = models.FileField(verbose_name='logo', max_length=128, upload_to='city/%Y-%m-%d')
